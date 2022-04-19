@@ -79,6 +79,23 @@ class LoggingMq(object):
             return True
 
 
+def async_logger_time_cost(tar_func):
+    @wraps(tar_func)
+    async def wrap_func(*args, **kwargs):
+        st = time.time()
+        res = await tar_func(*args, **kwargs)
+        time_cost = time.time() - st
+        time_cost *= 1000
+        time_cost = "%.2f" % time_cost
+        if 'request' in kwargs:
+            r = kwargs['request']
+            _logger.info("{}: {}:   cost {}ms".format(r.method, r.url.path, time_cost))
+        else:
+            _logger.info("function {} cost {} ms".format(tar_func.__name__, time_cost))
+        return res
+    return wrap_func
+
+
 def logger_time_cost(tar_func):
     @wraps(tar_func)
     def wrap_func(*args, **kwargs):
@@ -93,7 +110,6 @@ def logger_time_cost(tar_func):
         else:
             _logger.info("function {} cost {} ms".format(tar_func.__name__, time_cost))
         return res
-
     return wrap_func
 
 

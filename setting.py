@@ -14,6 +14,8 @@ class DefaultSetting:
     def __init__(self, section: SectionProxy):
         self.send_error_msg = section['send_error_msg']
         self.msg_robot = section['msg_robot']
+        self.token_timeout = section.get('token_timeout', 86400)  # 默认一天
+        self.secret_key = section.get('secret_key')
 
 
 class MongoDBSetting:

@@ -3,7 +3,7 @@ from urllib.parse import urlencode
 
 import httpx
 
-from model.mongodb import get_client
+from model.db_model.mongodb import get_client
 
 
 klx_db_map = {

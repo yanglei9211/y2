@@ -17,6 +17,14 @@ def str_may_to_objectid(value):
         return False, value
 
 
+def safe_objectid_from_str(value):
+    # return ObjectId(value)
+    try:
+        return ObjectId(value)
+    except InvalidId:
+        raise DTError(u'数据%s 异常,非法ID' % value)
+
+
 class SafeJSONResponse(Response):
     media_type = "application/json"
 
