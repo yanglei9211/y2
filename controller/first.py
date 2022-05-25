@@ -1,5 +1,5 @@
 from bson import ObjectId
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, UploadFile, File
 from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel, Field
 from starlette.requests import Request
@@ -22,7 +22,7 @@ def read_root(request: Request):
     return {"Welcome": "y2"}
 
 
-@first_router.get("/items", tags=['测试'])
+@first_router.get("/item", tags=['测试'])
 @logger_time_cost
 def load_item(item_id: str,  request: Request, token: str = Depends(oauth2_scheme)):
     ret = Item.find_by_id('math', ObjectId(item_id))
@@ -43,9 +43,20 @@ class LoadItemModel(BaseModel):
     subject: str = Field(..., description='学科')
 
 
-@first_router.post("/items", tags=['测试'])
+@first_router.post("/item", tags=['测试'])
 @logger_time_cost
 def post_load_item(args: LoadItemModel, request: Request, token: str = Depends(DataAuthValidate)):
     print(str)
     ret = Item.find_by_id(args.subject, safe_objectid_from_str(args.item_id))
     return SafeJSONResponse({'item': ret})
+
+
+@first_router.post("/files", tags=['测试'])
+async def create_file(filename: str, file: bytes = File(...)):
+    ret = {
+        'filename': filename,
+        'size': len(file)
+    }
+    return SafeJSONResponse(ret)
+
+
