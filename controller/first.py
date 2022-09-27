@@ -46,7 +46,8 @@ class LoadItemModel(BaseModel):
 @first_router.post("/item", tags=['测试'])
 @logger_time_cost
 def post_load_item(args: LoadItemModel, request: Request, token: str = Depends(DataAuthValidate)):
-    print(str)
+    print("---------")
+    print(args)
     ret = Item.find_by_id(args.subject, safe_objectid_from_str(args.item_id))
     return SafeJSONResponse({'item': ret})
 
@@ -59,4 +60,13 @@ async def create_file(filename: str, file: bytes = File(...)):
     }
     return SafeJSONResponse(ret)
 
+@first_router.post("/sub", tags=['测试'])
+@logger_time_cost
+def sub_method(x:int , y: int):
+    ret = {
+        'ans': 0
+    }
+    for i in range(1, x):
+        ret['ans'] = i / y
+    return SafeJSONResponse(ret)
 

@@ -1,12 +1,17 @@
+import os
+
 import traceback
 from typing import Optional
 
 import uvicorn
 from fastapi import FastAPI
 from pydantic import BaseModel
+from fastapi.staticfiles import StaticFiles
+from fastapi.openapi.docs import get_swagger_ui_html, get_swagger_ui_oauth2_redirect_html, get_redoc_html
 
 from controller.doc_token import token_router
 from controller.first import first_router
+from controller.search import search_route
 from controller.user import user_router
 from model.db_model.mongodb import setup_mongodb_client
 from setting import program_args
@@ -36,7 +41,33 @@ def hash_password(s):
 app = FastAPI()
 app.include_router(first_router, prefix='/api/y2/test', tags=['测试'])
 app.include_router(user_router, prefix='/api/y2/user', tags=['账号'])
+app.include_router(search_route, prefix='/api/y2/search', tags=['搜索'])
 app.include_router(token_router, tags=['swagger'])
+
+static_dir = os.path.dirname(os.path.abspath(__file__))
+app.mount("/static", StaticFiles(directory=f"{static_dir}/static"), name="static")
+@app.get("/docs", include_in_schema=False)
+async def custom_swagger_ui_html():
+    return get_swagger_ui_html(
+        openapi_url=app.openapi_url,
+        title=app.title + " - Swagger UI",
+        oauth2_redirect_url=app.swagger_ui_oauth2_redirect_url,
+        swagger_js_url="/static/swagger-ui/swagger-ui-bundle.js",
+        swagger_css_url="/static/swagger-ui/swagger-ui.css",
+    )
+
+@app.get(app.swagger_ui_oauth2_redirect_url, include_in_schema=False)
+async def swagger_ui_redirect():
+    return get_swagger_ui_oauth2_redirect_html()
+
+@app.get("/redoc", include_in_schema=False)
+async def redoc_html():
+    return get_redoc_html(
+        openapi_url=app.openapi_url,
+        title=app.title + " - ReDoc",
+        redoc_js_url="/static/redoc/redoc.standalone.js",
+    )
+
 
 
 @app.exception_handler(DTError)
@@ -49,7 +80,7 @@ async def system_exception_handler(request, exc):
     emsg = traceback.format_exc()
     exc = str(exc) + "\n" + emsg
     Logging.error(exc)
-    return SafeJSONResponse({'err_msg': exc})
+    return SafeJSONResponse({'err_msg': '内部调用错误'})
 
 
 # oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")

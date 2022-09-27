@@ -30,5 +30,9 @@ def cn2en(s):
     f1 = s2[s1]
     return f0, f1
 
-r = cn2en('初中物理')
-print(r)
+# r = cn2en('初中物理')
+# print(r)
+ans = '\\(\\left\\{ {\\begin{array}{*{20}{l}}{x + y - 2 = 0} \\\\{x + 2y - 3 = 0} \\end{array}} \\right.\\)'
+ans = re.sub(r'\\\\{', r'\\\\ {', ans)
+ans = re.sub(r'(?<!\\left)\\{', r'\\left\\{', ans)
+print(ans)

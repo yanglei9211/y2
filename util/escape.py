@@ -29,6 +29,8 @@ class SafeJSONResponse(Response):
     media_type = "application/json"
 
     def render(self, content: Any) -> bytes:
+        if hasattr(content, 'dict'):
+            content = content.dict()
         if not content:
             content = {}
         if 'err_msg' not in content:
