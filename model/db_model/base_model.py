@@ -50,6 +50,15 @@ class BaseSubjectDbModel:
         res = col.find_one({'_id': _id})
         return res
 
+    @classmethod
+    def find_by_ids(cls, subject, ids, projection=[]) -> list:
+        DB = klx_db_map[subject]
+        col = get_client()[DB][cls.TBL]
+        if projection and isinstance(projection, list):
+            res = list(col.find({'_id': {'$in': ids}}, projection=projection))
+        else:
+            res = list(col.find({'_id': {'$in': ids}}))
+        return res
 
 class Item(BaseSubjectDbModel):
     TBL = 'items'

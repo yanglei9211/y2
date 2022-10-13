@@ -32,6 +32,11 @@ class MqSetting:
         self.log_mq_name = section['log_mq_name']
 
 
+class EsSetting:
+    def __init__(self, section: SectionProxy):
+        self.es_host = section['es_host']
+
+
 def get_config(debug: int) -> RawConfigParser:
     filename = 'server.conf' if debug else 'prod.conf'
     cf = RawConfigParser()
@@ -60,3 +65,7 @@ mongodb_setting = MongoDBSetting(_cf['mongodb'])
 
 # mq配置
 mq_setting = MqSetting(_cf['mq'])
+
+# es配置
+es_setting = EsSetting(_cf['es'])
+
