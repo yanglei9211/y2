@@ -6,10 +6,11 @@ from pydantic import BaseModel, Field
 from elasticsearch_dsl import Q,A,Search
 from starlette.requests import Request
 
-from bl.search import item2es_item
+from bl.search import item2es_item, search_by_keyword
 from model.db_model.base_model import Item
 from model.es.item import EsItem
-from model.params_model.search import SearchItemUpsertParamModel, SearchItemSearchRespModel, SearchItemSearchParamModel
+from model.params_model.search import SearchItemUpsertParamModel, SearchItemSearchRespModel, SearchItemSearchParamModel, \
+    BaseItemInfoModel
 from util.errors import DTError
 from util.escape import SafeJSONResponse, safe_objectid_from_str
 from util.logger import async_logger_time_cost, logger_time_cost
@@ -58,8 +59,15 @@ def upsert_item(args: SearchItemUpsertParamModel):
     EsItem.update_many(subject, [es_item])
     return SafeJSONResponse()
 
-@search_route.get("/tengine/item/search", response_model=SearchItemSearchRespModel)
+@search_route.post("/tengine/item/search", response_model=SearchItemSearchRespModel)
 @logger_time_cost
 def search_item(args: SearchItemSearchParamModel):
-    resp = SearchItemSearchRespModel()
+    print(args.subject)
+    print(args.keyword)
+
+    texts, item_ids = search_by_keyword(args.subject, args.keyword)
+    print(texts, item_ids)
+    resp = SearchItemSearchRespModel(items=[])
+    for t, i in zip(texts, item_ids):
+        resp.items.append(BaseItemInfoModel(item_id=i, text=t))
     return SafeJSONResponse(resp)
