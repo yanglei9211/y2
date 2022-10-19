@@ -9,6 +9,7 @@ class SearchItemUpsertParamModel(BaseModel):
 class SearchItemSearchParamModel(BaseModel):
     subject: str = Field(..., description="学科")
     keyword: str = Field(..., description="关键字")
+    tag_ids: List[str] = Field(..., description="知识点")
 
 
 class BaseItemInfoModel(BaseModel):
@@ -16,5 +17,6 @@ class BaseItemInfoModel(BaseModel):
     text: str = Field(..., description='文本信息')
 
 class SearchItemSearchRespModel(BaseModel):
+    total: int = Field(..., description="题量")
     items: List[BaseItemInfoModel] = Field(..., description='题目')
 

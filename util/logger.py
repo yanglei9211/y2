@@ -32,10 +32,10 @@ class Logging(object):
         if not hasattr(cls, 'instance'):
             cls.instance = super(Logging, cls).__new__(cls)
         return cls.instance
-
-    @classmethod
-    def info(cls, msg):
-        return _logger.info(msg)
+    info = _logger.info
+    # @classmethod
+    # def info(cls, msg):
+    #     return _logger.info(msg)
 
     @classmethod
     def debug(cls, msg):

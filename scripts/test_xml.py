@@ -178,9 +178,8 @@ def do_text(s):
         return s
 
 
-# ori_str = '<str fake-selected=\"true\" font-family=\"SimSun\" xml_id=\"51\">选出下列每组单词中画线部分的读音与所给单词相同的一项。</str>\n<str xml_id=\"28\"> </str>[[nn]]<str xml_id=\"30\"> </str><str fake-selected=\"true\" font-family=\"Times New Roman\" underline-style=\"solid\" xml_id=\"31\">d</str><str fake-selected=\"true\" font-family=\"Times New Roman\" xml_id=\"32\">esk</str>'
-# r = do_text(ori_str)
-# print(r)
-
-a =  "\u670d\u52a1\u5668\u5185\u90e8\\u9519\\u8bef\\uff0c\\u9ad8\\u8d28\\u91cf\\u9898\\u5e93\\u5de5\\u7a0b\\u5e08\u6b63\u5728\u5168\u529b\u62a2\u4fee"
-print(a)
+if __name__ == '__main__':
+    answer = ['2', 0]
+    answer = u';'.join(answer) if isinstance(answer[0], str) else u''.join(
+        map(lambda x: chr(ord('A') + x), answer))
+    print(answer)

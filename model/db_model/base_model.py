@@ -60,8 +60,12 @@ class BaseSubjectDbModel:
             res = list(col.find({'_id': {'$in': ids}}))
         return res
 
+
 class Item(BaseSubjectDbModel):
     TBL = 'items'
+
+class KnowledgeTags(BaseSubjectDbModel):
+    TBL = 'knowledge_tags'
 
 
 class BaseHttpModel(object):

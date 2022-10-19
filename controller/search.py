@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 from elasticsearch_dsl import Q,A,Search
 from starlette.requests import Request
 
-from bl.search import item2es_item, search_by_keyword
+from bl.search import item2es_item, search_items
 from model.db_model.base_model import Item
 from model.es.item import EsItem
 from model.params_model.search import SearchItemUpsertParamModel, SearchItemSearchRespModel, SearchItemSearchParamModel, \
@@ -64,10 +64,11 @@ def upsert_item(args: SearchItemUpsertParamModel):
 def search_item(args: SearchItemSearchParamModel):
     print(args.subject)
     print(args.keyword)
+    print(args.tag_ids)
+    total, items = search_items(args)
+    # print(total, item_ids)
+    resp = SearchItemSearchRespModel(total=total, items=[])
+    for i in items:
+        resp.items.append(BaseItemInfoModel(item_id=i['item_id'], text=i['item_text']))
 
-    texts, item_ids = search_by_keyword(args.subject, args.keyword)
-    print(texts, item_ids)
-    resp = SearchItemSearchRespModel(items=[])
-    for t, i in zip(texts, item_ids):
-        resp.items.append(BaseItemInfoModel(item_id=i, text=t))
     return SafeJSONResponse(resp)
