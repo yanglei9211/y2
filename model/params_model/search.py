@@ -20,3 +20,16 @@ class SearchItemSearchRespModel(BaseModel):
     total: int = Field(..., description="题量")
     items: List[BaseItemInfoModel] = Field(..., description='题目')
 
+
+class SearchRedisSetParamModel(BaseModel):
+    k: str = Field(..., description='key')
+    v: str = Field(..., description='value')
+    exp: int = Field(..., description='exp')
+
+class SearchRedisGetParamModel(BaseModel):
+    k: str = Field(..., description='key')
+
+class SearchRedisGetRespModel(BaseModel):
+    v: str = Field(..., description='v')
+    hit: bool= Field(..., description='hit')
+

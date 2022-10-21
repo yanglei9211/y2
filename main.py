@@ -14,6 +14,8 @@ from controller.first import first_router
 from controller.search import search_route
 from controller.user import user_router
 from model.db_model.mongodb import setup_mongodb_client
+from model.es.base_model import setup_es_client
+from model.es.es_scripts import put_scripts
 from setting import program_args
 from util.escape import SafeJSONResponse
 from util.errors import DTError
@@ -129,8 +131,9 @@ def start_server():
     port = program_args.port
     setup_mongodb_client()
     setup_logging()
+    setup_es_client()
+    put_scripts() # 加载es排序脚本
     # init_logger()
-
     uvicorn.run(app="main:app", host=host, port=port, reload=True, debug=True)
 
 

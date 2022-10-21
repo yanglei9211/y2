@@ -1,16 +1,17 @@
 from pprint import pprint
 from typing import List
 
-from fastapi import APIRouter, Depends, UploadFile, File
+from fastapi import APIRouter, Depends, UploadFile, File, Query
 from pydantic import BaseModel, Field
 from elasticsearch_dsl import Q,A,Search
 from starlette.requests import Request
 
 from bl.search import item2es_item, search_items
 from model.db_model.base_model import Item
+from model.db_model.redis import set_cache, get_cache, get_knowledge_tree
 from model.es.item import EsItem
 from model.params_model.search import SearchItemUpsertParamModel, SearchItemSearchRespModel, SearchItemSearchParamModel, \
-    BaseItemInfoModel
+    BaseItemInfoModel, SearchRedisSetParamModel, SearchRedisGetRespModel
 from util.errors import DTError
 from util.escape import SafeJSONResponse, safe_objectid_from_str
 from util.logger import async_logger_time_cost, logger_time_cost
@@ -72,3 +73,28 @@ def search_item(args: SearchItemSearchParamModel):
         resp.items.append(BaseItemInfoModel(item_id=i['item_id'], text=i['item_text']))
 
     return SafeJSONResponse(resp)
+
+
+@search_route.post("/tengine/redis/set")
+@logger_time_cost
+def redis_set_kv(args: SearchRedisSetParamModel):
+    set_cache(args.k, args.v, args.exp)
+    return SafeJSONResponse()
+
+
+@search_route.get("/tengine/redis/get", response_model=SearchRedisGetRespModel)
+@logger_time_cost
+def redis_get_k(k: str = Query(..., description="k")):
+    found, ret = get_cache(k)
+    resp = SearchRedisGetRespModel(hit=found, v=ret)
+    return SafeJSONResponse(resp)
+
+
+@search_route.get("/tengine/tag_tree")
+@logger_time_cost
+def watch_tag_tree(subject: str = Query(..., description='学科'),
+                   tag_ids: List[str] = Query(..., description='知识点id')):
+    tag_ids = list(map(safe_objectid_from_str, tag_ids))
+    ret = get_knowledge_tree(subject, tag_ids)
+    pprint(ret)
+    return SafeJSONResponse()

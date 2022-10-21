@@ -2,7 +2,7 @@ from pprint import pprint
 
 from elasticsearch_dsl import Q, Search
 
-from bl.search_engine import SearchEngine
+from bl.search_engine import SearchEngine, generate_define_sort
 from model.es.base_model import get_dsl_client
 from model.es.item import EsItem
 
@@ -71,9 +71,12 @@ def search_items(search_item_params):
     params = {
         'keyword': search_item_params.keyword,
         'tag_ids': search_item_params.tag_ids,
+        'sort_params': generate_define_sort(search_item_params.subject,
+                                            tag_ids=search_item_params.tag_ids)
     }
     se = SearchEngine(search_item_params.subject, EsItem, **params)
     se.filling()
+    se.filling_sort()
     res = se.search()
     ret = []
     total = res.total
@@ -81,7 +84,8 @@ def search_items(search_item_params):
         item_id = hit['_id']
         ret.append({'item_id': item_id,
                     'item_text': item2text(hit)})
-    pprint(res.hits)
+        # print(hit['_id'], hit['sort'], hit['_score'])
+    # pprint(res.hits)
     return total, ret
 
 

@@ -25,6 +25,13 @@ class MongoDBSetting:
         self.w_value = section.get('w_value', 1)
         self.wtimeout = section.get('wtimeout', 5000)
 
+class RedisSetting:
+    def __init__(self, section: SectionProxy):
+        self.redis_url = section['redis_url']
+        self.redis_db = section.get('redis_db', 0)
+        self.redis_timeout = section.get('redis_timeout', 5.0)
+        self.redis_timeout = float(self.redis_timeout)
+
 
 class MqSetting:
     def __init__(self, section: SectionProxy):
@@ -62,6 +69,9 @@ default_setting = DefaultSetting(_cf['default'])
 
 # mongodb配置
 mongodb_setting = MongoDBSetting(_cf['mongodb'])
+
+#redis配置
+redis_setting = RedisSetting(_cf['redis'])
 
 # mq配置
 mq_setting = MqSetting(_cf['mq'])
