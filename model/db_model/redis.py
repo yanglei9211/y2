@@ -72,19 +72,3 @@ def del_hash_cache(name, keys):
     c = get_client()
     ret = c.hdel(name, *keys)
     return ret
-
-
-def set_knowledge_tree(subject, tree):
-    set_hash_cache('item_engine3_ktree_{}'.format(subject), tree)
-
-
-def del_knowledge_tree(subject):
-    c = get_client()
-    c.delete('item_engine3_ktree_{}'.format(subject))
-
-
-def get_knowledge_tree(subject, keys):
-    keys = [str(key) for key in keys]
-    values = get_hash_mcache('item_engine3_ktree_{}'.format(subject), keys) if keys else []
-    values = [json.loads(value) for value in values]
-    return values

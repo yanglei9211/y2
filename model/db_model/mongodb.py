@@ -8,13 +8,27 @@ from setting import mongodb_setting as m_setting
 _client: Optional[MongoClient] = None
 
 class MongoDbClient(object):
+
+    @classmethod
+    def connect_mongodb(cls, host, wtimeout):
+        client = MongoClient(host=host, wtimeout=wtimeout)
+        return client
+
+    @classmethod
+    def connect_mongodb_replica_set(cls, host, replicaSet, w, wtimeout):
+        client = MongoClient(host=host, replicaSet=replicaSet, w=w, wtimeout=wtimeout)
+        return client
     def __new__(cls):
         Logging.info("*************check instance before: {}".format(hasattr(cls, 'instance')))
         if not hasattr(cls, 'instance'):
-            Logging.info('connecting mongodb: {}'.format(m_setting.mongodb_url))
             cls.instance = super(MongoDbClient, cls).__new__(cls)
-            cls.client = MongoClient(host=m_setting.mongodb_url, replicaSet=m_setting.replica_set,
-                                     w=m_setting.w_value, wtimeout=m_setting.wtimeout)
+            if m_setting.replica_set != "":
+                Logging.info('connecting mongodb replica_set: {}'.format(m_setting.mongodb_url))
+                cls.client = MongoClient(host=m_setting.mongodb_url, replicaSet=m_setting.replica_set,
+                                         w=m_setting.w_value, wtimeout=m_setting.wtimeout)
+            else:
+                Logging.info('connecting mongodb: {}'.format(m_setting.mongodb_url))
+                cls.client = cls.connect_mongodb(m_setting.mongodb_url, m_setting.wtimeout)
             Logging.info('connect mongodb success')
         Logging.info("*************check instance after: {}".format(hasattr(cls, 'instance')))
         return cls.instance

@@ -11,11 +11,9 @@ from fastapi.openapi.docs import get_swagger_ui_html, get_swagger_ui_oauth2_redi
 
 from controller.doc_token import token_router
 from controller.first import first_router
-from controller.search import search_route
 from controller.user import user_router
 from model.db_model.mongodb import setup_mongodb_client
-from model.es.base_model import setup_es_client
-from model.es.es_scripts import put_scripts
+from model.db_model.redis import setup_redis_client
 from setting import program_args
 from util.escape import SafeJSONResponse
 from util.errors import DTError
@@ -43,7 +41,6 @@ def hash_password(s):
 app = FastAPI()
 app.include_router(first_router, prefix='/api/y2/test', tags=['测试'])
 app.include_router(user_router, prefix='/api/y2/user', tags=['账号'])
-app.include_router(search_route, prefix='/api/y2/search', tags=['搜索'])
 app.include_router(token_router, tags=['swagger'])
 
 static_dir = os.path.dirname(os.path.abspath(__file__))
@@ -130,9 +127,8 @@ def start_server():
     host = '0.0.0.0'
     port = program_args.port
     setup_mongodb_client()
+    setup_redis_client()
     setup_logging()
-    setup_es_client()
-    put_scripts() # 加载es排序脚本
     # init_logger()
     uvicorn.run(app="main:app", host=host, port=port, reload=True, debug=True)
 

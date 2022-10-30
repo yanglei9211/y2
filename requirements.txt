@@ -4,3 +4,7 @@ loguru~=0.6.0
 httpx~=0.19.0
 python-jose~=3.3.0
 oss2~=2.13.0
+uvicorn~=0.17.6
+redis~=3.5.3
+pika~=1.1.0
+python-multipart~=0.0.5

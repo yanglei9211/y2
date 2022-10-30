@@ -12,8 +12,6 @@ class ProgramArgs:
 
 class DefaultSetting:
     def __init__(self, section: SectionProxy):
-        self.send_error_msg = section['send_error_msg']
-        self.msg_robot = section['msg_robot']
         self.token_timeout = section.get('token_timeout', 86400)  # 默认一天
         self.secret_key = section.get('secret_key')
 
@@ -21,8 +19,8 @@ class DefaultSetting:
 class MongoDBSetting:
     def __init__(self, section: SectionProxy):
         self.mongodb_url = section['mongodb_url']
-        self.replica_set = section['replica_set']
-        self.w_value = section.get('w_value', 1)
+        self.replica_set = section.get('replica_set', "")
+        self.w_value = section.get('w_value', "")
         self.wtimeout = section.get('wtimeout', 5000)
 
 class RedisSetting:
@@ -32,16 +30,6 @@ class RedisSetting:
         self.redis_timeout = section.get('redis_timeout', 5.0)
         self.redis_timeout = float(self.redis_timeout)
 
-
-class MqSetting:
-    def __init__(self, section: SectionProxy):
-        self.mq_host = section['mq_host']
-        self.log_mq_name = section['log_mq_name']
-
-
-class EsSetting:
-    def __init__(self, section: SectionProxy):
-        self.es_host = section['es_host']
 
 
 def get_config(debug: int) -> RawConfigParser:
@@ -72,10 +60,3 @@ mongodb_setting = MongoDBSetting(_cf['mongodb'])
 
 #redis配置
 redis_setting = RedisSetting(_cf['redis'])
-
-# mq配置
-mq_setting = MqSetting(_cf['mq'])
-
-# es配置
-es_setting = EsSetting(_cf['es'])
-

@@ -3,10 +3,6 @@ import time
 from functools import wraps
 
 from loguru import logger as _logger
-from setting import mq_setting, default_setting
-from util.escape import json_encode
-from util.mq import RabbitMQProducer
-
 
 # def init_logger():
 #     basedir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -47,36 +43,9 @@ class Logging(object):
 
     @classmethod
     def error(cls, msg):
-        LoggingMq().send_msg(msg)
+        # LoggingMq().send_msg(msg)
         return _logger.error(msg)
 
-
-class LoggingMq(object):
-    def __new__(cls):
-        print('new log mq')
-        if not hasattr(cls, 'instance'):
-            cls.instance = super(LoggingMq, cls).__new__(cls)
-            cls._mq = RabbitMQProducer(mq_setting.mq_host, mq_setting.log_mq_name)
-            cls.send_error_msg = default_setting.send_error_msg
-        return cls.instance
-
-    @classmethod
-    def send_msg(cls, msg):
-        if not cls.send_error_msg:
-            return True
-        try:
-            mq = cls._mq
-            data = {
-                'name': default_setting.msg_robot,
-                'message': msg,
-                'msg_type': 'text',
-            }
-            mq.send_message(message=json_encode(data))
-        except Exception as e:
-            _logger.warning(str(e))
-            return False
-        else:
-            return True
 
 
 def async_logger_time_cost(tar_func):
@@ -115,4 +84,3 @@ def logger_time_cost(tar_func):
 
 def setup_logging():
     Logging()
-    LoggingMq()
