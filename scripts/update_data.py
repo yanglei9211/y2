@@ -7,7 +7,9 @@ from bson import ObjectId
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from model.es.item import EsItem
-from model.db_model.base_model import Item
+from model.es.suit_packet import EsPacket
+from model.db_model.base_model import Item, SuitPacket
+
 
 def update_item(item_ids, subject):
     items = Item.find_by_ids(subject, [ObjectId(x) for x in item_ids])
@@ -45,8 +47,22 @@ def update_item(item_ids, subject):
         es_items.append(es_item)
     EsItem.update_many(subject, es_items, refresh=False)
 
-
-
+def update_packet(packet_ids, subject):
+    sps = SuitPacket.find_by_ids(subject, [ObjectId(x) for x in packet_ids])
+    for p in sps:
+        print(p['_id'])
+    es_packets = []
+    for p in sps:
+        es_p = {
+            'suit_packet_id': str(p['_id']),
+            'username': p['username'],
+            'name': p['name'],
+            'edu': p['edu'],
+            'suit_papers': p['suit_papers'],
+            'user_info': p['user_info'],
+        }
+        es_packets.append(es_p)
+    EsPacket.update_many(subject, es_packets, refresh=False)
 
 def create_idx():
     print(sys.path)
@@ -55,10 +71,14 @@ def create_idx():
         # 'english',
         # 'chinese',
     ]:
+        print("build item index")
         index_name = EsItem.create_index(subject)
-        print(index_name)
         alias_name = EsItem.realias(subject, index_name)
-        print(alias_name)
+        print(index_name, alias_name)
+        print("build packet index")
+        index_name = EsPacket.create_index(subject)
+        alias_name = EsPacket.realias(subject, index_name)
+        print(index_name, alias_name)
 
 
 def update_items():
@@ -167,6 +187,18 @@ def update_items():
     "58c7bb4bdef297405bb200f9"
     ]
     update_item(item_ids, subject)
+
+
+def update_packet():
+    print(sys.path)
+    subject = 'math'
+    packet_ids = [
+        '6357b0302ce3c43f5b0d7cf3',
+        '6357c68f2ce3c41e5363b522',
+        '6357c6c02ce3c41e5363b525',
+        '636484bb7bbbcab0101802a7',
+        '636486227bbbcab0101802aa'
+    ]
 
 if __name__ == '__main__':
     update_items()

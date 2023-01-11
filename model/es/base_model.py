@@ -74,7 +74,7 @@ class EsBaseModel(Document):
             actions.append({
                 '_op_type': 'index',
                 '_index': index_name,
-                '_type': 'doc',
+                # '_type': 'doc',  # 新版本没有type了
                 '_id': data[cls.ID],
                 '_source': data,
             })
