@@ -88,4 +88,10 @@ def search_items(search_item_params):
     # pprint(res.hits)
     return total, ret
 
+def search_packet(search_packet_params):
+    params = {
+        'use.term.week': search_packet_params.cnt
+    }
+
+
 

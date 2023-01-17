@@ -10,12 +10,13 @@ from bl.search import item2es_item, search_items
 from model.db_model.base_model import Item
 from model.db_model.redis import set_cache, get_cache, get_knowledge_tree
 from model.es.item import EsItem
+from model.es.suit_packet import EsPacket
 from model.params_model.search import SearchItemUpsertParamModel, SearchItemSearchRespModel, SearchItemSearchParamModel, \
-    BaseItemInfoModel, SearchRedisSetParamModel, SearchRedisGetRespModel
+    BaseItemInfoModel, SearchRedisSetParamModel, SearchRedisGetRespModel, SearchPacketSearchParamModel
 from util.errors import DTError
 from util.escape import SafeJSONResponse, safe_objectid_from_str
-from util.logger import async_logger_time_cost, logger_time_cost
-from model.es.base_model import get_dsl_client
+from util.logger import async_logger_time_cost, logger_time_cost, Logging
+from model.es.base_model import get_dsl_client, get_es_client
 
 search_route = APIRouter()
 
@@ -73,6 +74,53 @@ def search_item(args: SearchItemSearchParamModel):
         resp.items.append(BaseItemInfoModel(item_id=i['item_id'], text=i['item_text']))
 
     return SafeJSONResponse(resp)
+
+
+@search_route.post("/tengine/packet/search")
+@logger_time_cost
+def search_packet(args: SearchPacketSearchParamModel):
+    Logging.info(args.subject, args.cnt)
+    client = get_es_client()
+    s = Search(using=client, index=EsPacket.alias('math'))
+    # s = s.query("match", suit_packet_id='5f6c18ba84da5a37fc6919d8')
+    # s = Search().using(client).query("match", suit_packet_id='5f6c18ba84da5a37fc6919d8')
+    # s = s.filter('terms', edu=[2,3,4])
+    # print(s.count())
+    # s = s.query("range", use_info__term__use={'gt': 0})
+    # s = s.filter("terms", edu=[2,3,4])
+    # s = s.sort('use_info.term.use')
+    # s.script_fields()
+    # s = s.script_fields(sort_num={
+    #     'script': {
+    #         'lang':"painless",
+    #         'source': "doc['use_info.term.use'].value*2"
+    # }})
+    # s = s.sort(
+    #     {"_script": {
+    #                 "script": {
+    #                     'lang': "painless",
+    #                     'source': "doc['use_info.term.use'].value*2"
+    #                 },
+    #                 "order": "asc",
+    #                 "type": "number"
+    #             }}
+    # )
+    tp = 'sum'
+    a = A(tp, field='edu')
+    # a = A()
+    s.aggs.bucket(tp, a)
+    s = s[0:15]
+    s = s.execute()
+    print(len(s))
+    pprint(s.aggs.to_dict())
+    for hit in s:
+        # pprint(hit)
+        d = hit.to_dict()
+        print(d['name'], d['suit_packet_id'], d['edu'])
+        # pprint(d)
+    return SafeJSONResponse()
+
+
 
 
 @search_route.post("/tengine/redis/set")

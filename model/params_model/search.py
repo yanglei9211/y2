@@ -11,6 +11,10 @@ class SearchItemSearchParamModel(BaseModel):
     keyword: str = Field(..., description="关键字")
     tag_ids: List[str] = Field(..., description="知识点")
 
+class SearchPacketSearchParamModel(BaseModel):
+    subject: str = Field(..., description="学科")
+    cnt: int = Field(..., description="count")
+
 
 class BaseItemInfoModel(BaseModel):
     item_id: str = Field(..., description='item_id')

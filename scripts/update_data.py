@@ -53,14 +53,17 @@ def update_packet(packet_ids, subject):
         print(p['_id'])
     es_packets = []
     for p in sps:
+        print(p['_id'])
         es_p = {
             'suit_packet_id': str(p['_id']),
-            'username': p['username'],
+            'username': p.get('username','system'),
             'name': p['name'],
             'edu': p['edu'],
             'suit_papers': p['suit_papers'],
-            'user_info': p['user_info'],
+            'use_info': p.get('use_info', {}),
         }
+        for i, s in enumerate(es_p['suit_papers']):
+            es_p['suit_papers'][i]['suit_paper_id'] = str(es_p['suit_papers'][i]['suit_paper_id'])
         es_packets.append(es_p)
     EsPacket.update_many(subject, es_packets, refresh=False)
 
@@ -189,17 +192,29 @@ def update_items():
     update_item(item_ids, subject)
 
 
-def update_packet():
+def update_packets():
     print(sys.path)
     subject = 'math'
     packet_ids = [
-        '6357b0302ce3c43f5b0d7cf3',
-        '6357c68f2ce3c41e5363b522',
-        '6357c6c02ce3c41e5363b525',
-        '636484bb7bbbcab0101802a7',
-        '636486227bbbcab0101802aa'
+        '5f801f4284da5a2834fa6f90',
+        '5fdac70fea93710b2626da87',
+        '5f6c18ba84da5a37fc6919d8',
+        '5fdacada72a3165f0c1f60c5',
+        '62b9626a2ce3c412dfc9856d',
+        '62b99c482ce3c447ef8fbb2c',
+        '62bc0c272ce3c42989eac56a',
+        '62c40f65bb2e398c3c8b020a',
+        '63575273c9cef683885706e3',
+        '636486617bbbcab0101802ac',
+        '63bf79c02f16f6b0efb7b18f',
+        '63be524b1003360a6a21a914',
+        '63be240da65f8f663e052eb6',
+        '63bd2c6da65f8f663e052eb0',
+        '63bbe0f37ae647898d449da2',
     ]
+    update_packet(packet_ids, subject)
 
 if __name__ == '__main__':
-    update_items()
+    # update_items()
     # create_idx()
+    update_packets()
