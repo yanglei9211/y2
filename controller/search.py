@@ -121,6 +121,19 @@ def search_packet(args: SearchPacketSearchParamModel):
     return SafeJSONResponse()
 
 
+@search_route.post("/tengine/aggs/item")
+@logger_time_cost
+def aggs_item():
+    client = get_es_client()
+    s = Search(using=client, index=EsItem.alias('math'))
+    a = A('terms', field='item_type')
+    tp = 'value_count'
+    s.aggs.bucket(tp, a)
+    s = s.execute()
+    pprint(s.aggs)
+    return SafeJSONResponse()
+
+
 
 
 @search_route.post("/tengine/redis/set")
