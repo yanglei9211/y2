@@ -32,4 +32,17 @@ def sub_func():
     dt = json.loads(res.text)
     pprint(dt)
 
-sub_func()
+def req_gemserver_go():
+    subject = 'math'
+    url = 'http://localhost:8080/{}/get_item_detail_by_id'.format(subject)
+    data = {
+        # 'item_id': '535782abe138233c80e1cbef'
+        'item_id': '6329665f8d2bc40aae29b3d4'
+    }
+    req = requests.get(url, data)
+    r = req.text
+    r = json.loads(r)
+    pprint(r)
+
+# sub_func()
+req_gemserver_go()

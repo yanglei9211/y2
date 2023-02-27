@@ -52,6 +52,15 @@ def post_load_item(args: LoadItemModel, request: Request, token: str = Depends(D
     return SafeJSONResponse({'item': ret})
 
 
+@first_router.post("/item2", tags=['测试'])
+@logger_time_cost
+def post_load_item(args: LoadItemModel, request: Request):
+    print("---------")
+    print(args)
+    ret = Item.find_by_id(args.subject, safe_objectid_from_str(args.item_id))
+    return SafeJSONResponse({'item': ret})
+
+
 @first_router.post("/files", tags=['测试'])
 async def create_file(filename: str, file: bytes = File(...)):
     ret = {
@@ -60,7 +69,7 @@ async def create_file(filename: str, file: bytes = File(...)):
     }
     return SafeJSONResponse(ret)
 
-@first_router.post("/sub", tags=['测试'])
+@first_router.get("/sub", tags=['测试'])
 @logger_time_cost
 def sub_method(x:int , y: int):
     ret = {

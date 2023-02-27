@@ -88,6 +88,31 @@ def update_items():
     print(sys.path)
     subject = 'math'
     item_ids = [
+        # type= 1001
+        "63d78cfb2ce3c42a9358b7f7",
+        "63be52092ce3c42a94d5088c",
+        "63bd32e3490a660001d90519",
+        "63bd325d490a660001d90515",
+        "63b7e419f2ec13000130fd87",
+        "63b78e9e2ce3c4778ee7094b",
+        "63b3f6a12ce3c431f8057abe",
+        "63ac1fab65e47000012bf393",
+        "63ac1f7265e47000012bf392",
+        "63ac114d2ce3c446d8e5d62d",
+        "63ac02982ce3c446d701c719",
+        "63aaa0cf11d1b90001b7ce3e",
+        "63aa626611d1b90001b7ce13",
+        "63aa623b2ce3c446d8e5d5da",
+        "63aa623b2ce3c446d8e5d5d9",
+        "63aa623b2ce3c446d8e5d5d8",
+        "63aa623b2ce3c446d8e5d5d7",
+        "63aa623b2ce3c446d8e5d5d6",
+        "63aa598b11d1b90001b7cdf9",
+        "63aa58942ce3c446d701c6cc",
+        
+        
+        
+        # tpye=1003
         "616f8ab2d6b0c1cafe9d4b78",
     "58c0f5c7def2976456dc83de",
     "59561aa1def29748b0df486b",
@@ -187,7 +212,30 @@ def update_items():
     "58b38321def297228e7e15e8",
     "58c0fbc1def2977d41c76df1",
     "578dab89def2976a3f2c199b",
-    "58c7bb4bdef297405bb200f9"
+    "58c7bb4bdef297405bb200f9",
+        # type= 1002
+        "63d7ac5f2ce3c42a9358b805",
+        "63d790147989180001434f15",
+        "63d78cfb2ce3c42a9358b7f8",
+        "63c102390538430001879cdf",
+        "63c1012d0538430001879cd3",
+        "63c100f20538430001879ccf",
+        "63b78ea62ce3c4778dafa4ff",
+        "63b4f1a82ce3c4778dafa4b0",
+        "63b40a1722a391b379cb0bfb",
+        "63b4072a22a391b379cb0bf9",
+        # type= 1003
+        "63d78cfb2ce3c42a9358b7ff",
+        "63d78cfb2ce3c42a9358b7fe",
+        "63d78cfb2ce3c42a9358b7fd",
+        "63d78cfb2ce3c42a9358b7fc",
+        "63d78cfb2ce3c42a9358b7fb",
+        "63d78cfb2ce3c42a9358b7fa",
+        "63ac114d2ce3c446d8e5d62f",
+        "63ac02982ce3c446d701c71b",
+        "63aa623b2ce3c446d8e5d5e2",
+        "63aa623b2ce3c446d8e5d5e1",
+
     ]
     update_item(item_ids, subject)
 
@@ -215,6 +263,6 @@ def update_packets():
     update_packet(packet_ids, subject)
 
 if __name__ == '__main__':
-    # update_items()
+    update_items()
     # create_idx()
-    update_packets()
+    # update_packets()

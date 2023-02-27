@@ -67,13 +67,21 @@ def search_item(args: SearchItemSearchParamModel):
     print(args.subject)
     print(args.keyword)
     print(args.tag_ids)
-    total, items = search_items(args)
-    # print(total, item_ids)
-    resp = SearchItemSearchRespModel(total=total, items=[])
-    for i in items:
-        resp.items.append(BaseItemInfoModel(item_id=i['item_id'], text=i['item_text']))
-
-    return SafeJSONResponse(resp)
+    # total, items = search_items(args)
+    # # print(total, item_ids)
+    # resp = SearchItemSearchRespModel(total=total, items=[])
+    client = get_es_client()
+    s = Search(using=client, index=EsItem.alias('math'))
+    q = Q('match_phrase', questions={'query': args.keyword, 'slop': 1, 'boost': 1})
+    s = s.query(q)
+    s = s.execute()
+    for hit in s:
+        pprint(hit.to_dict())
+    # for i in items:
+    #     resp.items.append(BaseItemInfoModel(item_id=i['item_id'], text=i['item_text']))
+    #
+    # return SafeJSONResponse(resp)
+    return SafeJSONResponse()
 
 
 @search_route.post("/tengine/packet/search")
@@ -130,7 +138,7 @@ def aggs_item():
     tp = 'value_count'
     s.aggs.bucket(tp, a)
     s = s.execute()
-    pprint(s.aggs)
+    pprint(s.aggs.to_dict())
     return SafeJSONResponse()
 
 
